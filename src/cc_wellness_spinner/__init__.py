@@ -1,7 +1,8 @@
-"""cc-wellness-spinner — installs wellness-nudge spinner messages into
+"""cc-wellness-spinner: installs wellness-nudge spinner messages into
 Claude Code's spinnerVerbs setting."""
 
 import argparse
+import contextlib
 import importlib.metadata
 import importlib.resources
 import json
@@ -48,17 +49,17 @@ def read_settings(path):
         return {}
     except (OSError, UnicodeDecodeError) as err:
         raise CliError(
-            f"Could not read {path} ({err}). Fix or remove the file first — nothing was written."
+            f"Could not read {path} ({err}). Fix or remove the file first. Nothing was written."
         )
     try:
         data = json.loads(text)
     except json.JSONDecodeError as err:
         raise CliError(
-            f"Could not parse {path} as JSON ({err}). Fix or remove the file first — nothing was written."
+            f"Could not parse {path} as JSON ({err}). Fix or remove the file first. Nothing was written."
         )
     if not isinstance(data, dict):
         raise CliError(
-            f"Could not parse {path} as JSON (expected a top-level object). Fix or remove the file first — nothing was written."
+            f"Could not parse {path} as JSON (expected a top-level object). Fix or remove the file first. Nothing was written."
         )
     return data
 
@@ -98,16 +99,14 @@ def write_settings(path, settings):
             f.write(json.dumps(settings, indent=2, ensure_ascii=False) + "\n")
         os.replace(tmp, path)
     except BaseException:
-        try:
+        with contextlib.suppress(OSError):
             os.unlink(tmp)
-        except OSError:
-            pass
         raise
 
 
 def print_help(stdout):
     stdout.write(
-        """cc-wellness-spinner — while Claude works for you, it also looks out for you
+        """cc-wellness-spinner: while Claude works for you, it also looks out for you
 
 Installs wellness-nudge spinner messages into Claude Code's spinnerVerbs
 setting.
@@ -212,11 +211,11 @@ def main(argv, stdin, stdout, stderr):
         settings = read_settings(settings_path)
         new_settings, removed, was_present = uninstall_spinner_verbs(settings)
         if not was_present:
-            stdout.write("No spinnerVerbs setting found — nothing to remove.\n")
+            stdout.write("No spinnerVerbs setting found. Nothing to remove.\n")
             return 0
         removed_json = json.dumps(removed, indent=2, ensure_ascii=False)
         if args.dry_run:
-            stdout.write(f"Dry run — would remove spinnerVerbs:\n{removed_json}\n")
+            stdout.write(f"Dry run: would remove spinnerVerbs:\n{removed_json}\n")
             return 0
         write_settings(settings_path, new_settings)
         stdout.write(f"Removed spinnerVerbs:\n{removed_json}\n")
@@ -275,17 +274,16 @@ def main(argv, stdin, stdout, stderr):
     stdout.write("Restart any running Claude Code session to pick this up.\n")
     stdout.write(
         "Note: the VS Code extension uses a different key (claudeCode.spinnerVerbs "
-        "in VS Code's own settings.json) — this tool does not touch that.\n"
+        "in VS Code's own settings.json). This tool does not touch that.\n"
     )
     return 0
 
 
 def cli():
     for stream in (sys.stdout, sys.stderr):
-        try:
+        # StringIO in tests exposes no reconfigure(); its encoding is already fine
+        with contextlib.suppress(AttributeError):
             stream.reconfigure(errors="replace")
-        except AttributeError:
-            pass  # ponytail: non-reconfigurable stream (StringIO in tests) — leave as-is
     try:
         code = main(sys.argv[1:], sys.stdin, sys.stdout, sys.stderr)
     except CliError as err:

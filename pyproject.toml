@@ -1,7 +1,7 @@
 [project]
 name = "cc-wellness-spinner"
 version = "0.2.0"
-description = "Wellness-nudge spinner messages for Claude Code — while Claude works for you, it also looks out for you."
+description = "Wellness-nudge spinner messages for Claude Code. While Claude works for you, it also looks out for you."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]

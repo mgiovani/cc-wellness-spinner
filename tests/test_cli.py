@@ -331,7 +331,7 @@ def test_prompt_confirm(answer, expected):
 
 
 # ---------------------------------------------------------------------------
-# main() — install flows
+# main(): install flows
 # ---------------------------------------------------------------------------
 
 
@@ -450,7 +450,7 @@ def test_main_symlinked_settings_json(monkeypatch, tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# main() — --list / --help / --version / unknown flag
+# main(): --list / --help / --version / unknown flag
 # ---------------------------------------------------------------------------
 
 
@@ -511,7 +511,7 @@ def test_main_unknown_lang_raises_cli_error(monkeypatch, tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# main() — interactive flows
+# main(): interactive flows
 # ---------------------------------------------------------------------------
 
 
@@ -559,7 +559,7 @@ def test_main_interactive_eof_aborts(monkeypatch, tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# main() — uninstall flows
+# main(): uninstall flows
 # ---------------------------------------------------------------------------
 
 
@@ -569,7 +569,7 @@ def test_main_uninstall_absent_key(monkeypatch, tmp_path):
     out = io.StringIO()
     code = main(["--uninstall"], io.StringIO(), out, io.StringIO())
     assert code == 0
-    assert "No spinnerVerbs setting found — nothing to remove." in out.getvalue()
+    assert "No spinnerVerbs setting found. Nothing to remove." in out.getvalue()
 
 
 def test_main_uninstall_present_removes_and_writes(monkeypatch, tmp_path):
@@ -590,7 +590,7 @@ def test_main_uninstall_dry_run_does_not_write(monkeypatch, tmp_path):
     out = io.StringIO()
     code = main(["--uninstall", "--dry-run"], io.StringIO(), out, io.StringIO())
     assert code == 0
-    assert "Dry run — would remove spinnerVerbs:" in out.getvalue()
+    assert "Dry run: would remove spinnerVerbs:" in out.getvalue()
     assert path.read_text(encoding="utf-8") == original
 
 
