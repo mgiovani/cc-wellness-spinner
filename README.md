@@ -32,9 +32,6 @@ telemetry, just `settings.json`.
 
 ```bash
 uvx cc-wellness-spinner
-
-# prefer a pinned, reproducible install?
-uvx cc-wellness-spinner==0.2.0
 ```
 
 Pick a language, pick a mode, see a 5-message preview, confirm. Done.
